@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Головна сторінка{% endblock %}
+
+{% block content %}
+<h2 class="page-title">Останні відео</h2>
+<div class="videos-grid">
+    {% for video in videos %}
+    <div class="video-card">
+    <a href="{{ url_for('video_detail', filename=video) }}">
+        <video width="100%" height="200" controls>
+            <source src="{{ url_for('static', filename='uploads/' ~ video) }}" type="video/mp4">
+        </video>
+    </a>
+    <h4>{{ video }}</h4>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
