@@ -15,7 +15,13 @@
         <div class="search-bar">
             <input type="text" placeholder="Пошук відео...">
         </div>
-        <a href="{{ url_for('profile') }}" class="profile-icon">👤Profile</a>
+        <div>
+            <a href="{{ url_for('profile') }}" class="profile-icon">👤Profile</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}" class="profile-icon">🚪 Вийти</a>
+            {% endif %}
+        </div>
+
     </header>
 
     <div class="main-layout">

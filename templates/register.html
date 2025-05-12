@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>registration form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-loging.css') }}">
+</head>
+
+<body>
+    <div class="auth-container">
+        <h2>Реєстрація</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+        
+        <form method="POST" class="auth-form">
+            <label>Ім’я користувача:</label>
+            <input type="text" name="username" value="{{ session.pop('username', '') }}" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ session.pop('email', '') }}" required>
+
+            <label>Пароль:</label>
+            <input type="password" name="password" required>
+
+            <label>Підтвердження паролю:</label>
+            <input type="password" name="confirm_password" required>
+
+            <button type="submit">Зареєструватися</button>
+        </form>
+
+        <div class="register-link">
+            <p>Вже маєте аккаунт? <a href="{{ url_for('login') }}">Увійти</a></p>
+        </div>
+
+    </div>
+</body>
+</html>

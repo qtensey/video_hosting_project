@@ -1,29 +1,61 @@
 {% extends 'base.html' %}
-
-{% block title %}Профіль користувача - Онлайн Відеохостинг{% endblock %}
-
 {% block content %}
+
+<div class="header-profile">
+    <h1>Профіль користувача</h1>
+</div>
+
 <section class="profile-container">
+    <!-- Інформація про користувача -->
     <div class="profile-header">
-        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Avatar" class="avatar">
-        <div class="profile-info">
-            <h2>{{ user.name }}</h2>
-            <p class="channel-description">{{ user.channel_description }}</p>
-            <p><strong>Підписники:</strong> {{ user.subscribers }} • <strong>Відео:</strong> {{ user.video_count }}</p>
-        </div>
+            <div class="avatar-container">
+        <!-- Аватарка користувача -->
+        <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="Avatar" class="profile-avatar">
+
+        <!-- Форма для завантаження аватарки -->
+        <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+            <!-- Мітка для кнопки вибору файлу, яка виглядає як кнопка зміни аватара -->
+            <label for="avatar-input" class="avatar-upload-label" title="Змінити аватар"></label>
+            <!-- Приховане поле для завантаження файлу -->
+            <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="this.form.submit()">
+        </form>
     </div>
 
-    <h3 class="video-section-title">Мої відео</h3>
-    <div class="video-grid">
-        {% for video in user_videos %}
-        <div class="video-card">
-            <video width="100%" height="200" controls>
-                <source src="{{ url_for('static', filename='uploads/' ~ video.filename) }}" type="video/mp4">
-                Ваш браузер не підтримує відео.
-            </video>
-            <h4>{{ video.title }}</h4>
+
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <div class="user-info">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            </div>
         </div>
-        {% endfor %}
     </div>
 </section>
+
+<!-- Список відео -->
+<section class="videos-profile-container">
+    <div class="videos-header">
+        <h3>Мої відео</h3>
+        <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" class="upload-button-form">
+            <label for="video-upload" class="upload-button">➕ Завантажити відео</label>
+            <input type="file" name="video" id="video-upload" accept="video/mp4,video/webm" required onchange="this.form.submit()">
+        </form>
+    </div>
+    <div class="videos-grid">
+        {% for video in videos %}
+        <div class="video-card">
+            <video width="100%" height="200" controls>
+                <source src="{{ url_for('static', filename='uploads/' ~ video) }}" type="video/mp4">
+                Ваш браузер не підтримує відео.
+            </video>
+            <div class="video-info">
+                <h4>{{ video }}</h4>
+                <form action="{{ url_for('delete_video', filename=video) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити це відео?');">
+                    <button type="submit" class="delete-button">🗑️ Видалити</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div> 
+</section>
+
 {% endblock %}

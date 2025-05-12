@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>logining form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-loging.css') }}">
+</head>
+
+
+<body>
+    <div class="auth-container">
+        <h2>Вхід</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="auth-form">
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ session.pop('email', '') }}" required>
+
+            <label>Пароль:</label>
+            <input type="password" name="password" required>
+
+            <button type="submit">Увійти</button>
+        </form>
+
+        <div class="register-link">
+            <p>Ще не зареєстровані? <a href="{{ url_for('register') }}">Зареєструватися</a></p>
+        </div>
+
+    </div>
+</body>
+</html>
