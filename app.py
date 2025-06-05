@@ -36,10 +36,9 @@ def allowed_file(filename):
 
 @app.route('/')
 def main():
-    videos = Video.query.order_by(Video.id.desc()).all()  # або будь-яке сортування
+    uploads_dir = os.path.join(app.static_folder, 'uploads')
+    videos = [f for f in os.listdir(uploads_dir) if f.lower().endswith(('.mp4', '.avi', '.mov', '.mkv'))]
     return render_template('main.html', videos=videos)
-
-
 
 @app.route('/video/<filename>')
 def video_detail(filename):
@@ -69,25 +68,27 @@ def history():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
+    upload_folder = os.path.join(app.static_folder, 'uploads')
+    os.makedirs(upload_folder, exist_ok=True)
+
     if request.method == 'POST':
         file = request.files.get('video')
         if file and file.filename:
             filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            filepath = os.path.join(upload_folder, filename)
             file.save(filepath)
 
-            # Збереження у базу даних (потрібно імпортувати Video і db)
-            new_video = Video(
-                filename=filename,
-                title=request.form.get('title', filename),
-                description=request.form.get('description', ''),
-                user_id=current_user.id
-            )
-            db.session.add(new_video)
-            db.session.commit()
+    # Отримуємо всі .mp4 файли з папки
+    video_files = []
+    for filename in os.listdir(upload_folder):
+        if filename.endswith('.mp4'):
+            video_files.append({
+                'filename': filename,
+                'title': os.path.splitext(filename)[0],
+                'description': 'Опис відсутній'  # або можна парсити з JSON/іншого джерела
+            })
 
-    videos = Video.query.filter_by(user_id=current_user.id).all()
-    return render_template('profile.html', videos=videos, user=current_user)
+    return render_template('profile.html', videos=video_files, user=current_user)
 
 
 
