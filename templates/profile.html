@@ -5,17 +5,20 @@
 
   <div class="header-profile">
       <h1>Профіль користувача</h1>
-      <a href="" class="upload-button url_for">Edit</a>
+      <a href="#" class="upload-button">Edit</a>
   </div>
 
   <section class="profile-container">
     <div class="profile-header">
         <div class="avatar-container">
             <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="Avatar" class="profile-avatar">
-            <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+            <!-- Якщо завантаження аватара не реалізовано, форму можна прибрати -->
+            <!--
+            <form action="#" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
                 <label for="avatar-input" class="avatar-upload-label" title="Змінити аватар"></label>
                 <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="this.form.submit()">
             </form>
+            -->
         </div>
         <div class="profile-info">
             <h2>{{ user.username }}</h2>
@@ -24,14 +27,14 @@
             </div>
         </div>
     </div>
-</section>
+  </section>
 
-<section class="videos-profile-container">
-    <div class="videos-header">
-        <h3>Мої відео</h3>
-        <label for="video-upload" class="upload-button" onclick="openModal()">➕ Завантажити відео</label>
-    </div>
-</section>
+  <section class="videos-profile-container">
+      <div class="videos-header">
+          <h3>Мої відео</h3>
+          <label for="video-upload" class="upload-button" onclick="openModal()">➕ Завантажити відео</label>
+      </div>
+  </section>
 
 </div>
 
@@ -40,10 +43,10 @@
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
     <h2>Завантажити відео</h2>
-    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+    <form action="{{ url_for('profile') }}" method="POST" enctype="multipart/form-data" class="upload-form">
         <div class="file-input-wrapper">
             <input type="file" name="video" id="video" accept="video/*" required>
-            <span id="file-name"">Файл не вибрано</span>
+            <span id="file-name">Файл не вибрано</span>
             <label for="video" class="file-label">➕ Додати відео</label>
         </div>
 
@@ -68,12 +71,11 @@
         <div class="video-info">
             <h4>{{ video.title }}</h4>
             <p>{{ video.description }}</p>
-            <!-- Тут можна видалення прибрати або змінити, бо нема ID відео -->
+            <!-- Видалення поки що відсутнє, бо немає ідентифікаторів -->
         </div>
     </div>
     {% endfor %}
 </div>
-
 
 <script>
   function openModal() {
@@ -84,15 +86,15 @@
   }
 
   const fileInput = document.getElementById('video');
-    const fileName = document.getElementById('file-name');
+  const fileName = document.getElementById('file-name');
 
-    fileInput.addEventListener('change', function () {
-      if (this.files.length > 0) {
-        fileName.textContent = this.files[0].name;
-      } else {
-        fileName.textContent = "Файл не вибрано";
-      }
-    });
+  fileInput.addEventListener('change', function () {
+    if (this.files.length > 0) {
+      fileName.textContent = this.files[0].name;
+    } else {
+      fileName.textContent = "Файл не вибрано";
+    }
+  });
 </script>
 
 {% endblock %}

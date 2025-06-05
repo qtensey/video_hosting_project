@@ -18,9 +18,7 @@
         </div>
         <div>
             <a href="{{ url_for('profile') }}" class="profile-icon">👤Profile</a>
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('logout') }}" class="profile-icon">🚪 Вийти</a>
-            {% endif %}
+            <!-- Видалено блок з current_user, бо авторизації немає -->
         </div>
     </header>
 
