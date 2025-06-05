@@ -1,3 +1,41 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Головна сторінка{% endblock %}
+{% block content %}
+<div class="subscriptions-page">
+    <h1 class="subscription-title">Ваші підписки</h1>
+
+    <div class="subscriptions-grid">
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user1.jpg') }}" alt="Анна Коваленко">
+            <p>Анна Коваленко</p>
+        </div>
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user2.jpg') }}" alt="TechTime">
+            <p>TechTime</p>
+        </div>
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user3.jpg') }}" alt="Кулінарія з Олегом">
+            <p>Кулінарія з Олегом</p>
+        </div>
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user4.jpg') }}" alt="MusicZone">
+            <p>MusicZone</p>
+        </div>
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user5.jpg') }}" alt="GameSpace">
+            <p>GameSpace</p>
+        </div>
+
+        <div class="subscription-profile">
+            <img src="{{ url_for('static', filename='avatars/user6.jpg') }}" alt="Фітнес з Марією">
+            <p>Фітнес з Марією</p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

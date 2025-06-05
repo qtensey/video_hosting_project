@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 import os, json
 from werkzeug.utils import secure_filename
-from models import db, User
+from models import db, User, Video
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
@@ -12,6 +13,8 @@ app.secret_key = 'your_secret_key'  # Необхідно для повідомл
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.getcwd(), 'users.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+migrate = Migrate(app, db)
 
 db.init_app(app)
 
@@ -33,8 +36,9 @@ def allowed_file(filename):
 
 @app.route('/')
 def main():
-    videos = os.listdir(app.config['UPLOAD_FOLDER'])
+    videos = Video.query.order_by(Video.id.desc()).all()  # або будь-яке сортування
     return render_template('main.html', videos=videos)
+
 
 
 @app.route('/video/<filename>')
@@ -68,32 +72,50 @@ def profile():
     if request.method == 'POST':
         file = request.files.get('video')
         if file and file.filename:
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-    videos = os.listdir(app.config['UPLOAD_FOLDER'])
+
+            # Збереження у базу даних (потрібно імпортувати Video і db)
+            new_video = Video(
+                filename=filename,
+                title=request.form.get('title', filename),
+                description=request.form.get('description', ''),
+                user_id=current_user.id
+            )
+            db.session.add(new_video)
+            db.session.commit()
+
+    videos = Video.query.filter_by(user_id=current_user.id).all()
     return render_template('profile.html', videos=videos, user=current_user)
 
 
-@app.route('/upload', methods=['GET', 'POST'])
+
+@app.route('/upload', methods=['POST'])
+@login_required
 def upload_file():
-    if request.method == 'POST':
-        if 'video' not in request.files:
-            flash('Файл не знайдено у запиті', 'error')
-            return redirect(request.url)
-        file = request.files['video']
-        if file.filename == '':
-            flash('Файл не обрано', 'error')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(path)
-            flash('Файл успішно завантажено', 'success')
-            return redirect(url_for('main'))
-        else:
-            flash('Неприпустимий тип файлу', 'error')
-            return redirect(request.url)
-    return render_template('upload.html')
+    file = request.files['video']
+    title = request.form['title']
+    description = request.form['description']
+
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        new_video = Video(
+            filename=filename,
+            title=title,
+            description=description,
+            user_id=current_user.id
+        )
+        db.session.add(new_video)
+        db.session.commit()
+        flash('Відео успішно завантажено!')
+        return redirect(url_for('profile'))
+
+    flash('Помилка завантаження файлу.')
+    return redirect(url_for('profile'))
 
 
 @app.route('/upload_avatar', methods=['POST'])
@@ -125,6 +147,26 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.route('/delete_video/<int:video_id>', methods=['POST'])
+@login_required
+def delete_video(video_id):
+    video = Video.query.get_or_404(video_id)
+    if video.user_id != current_user.id:
+        abort(403)  # Заборонити видалення чужих відео
+
+    # Видаляємо файл з диску
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], video.filename))
+    except OSError:
+        pass
+
+    # Видаляємо з бази
+    db.session.delete(video)
+    db.session.commit()
+    flash('Відео успішно видалено!')
+    return redirect(url_for('profile'))
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -134,9 +176,9 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
-        # Зберігаємо поля у сесії, якщо буде помилка
-        session['username'] = username
-        session['email'] = email
+        # Зберігаємо тільки якщо є помилка
+        session['reg_username'] = username
+        session['reg_email'] = email
 
         if password != confirm_password:
             flash("Паролі не співпадають.")
@@ -151,29 +193,16 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        # Очистимо збережені дані
-        session.pop('username', None)
-        session.pop('email', None)
+        # Очистимо сесію після успішної реєстрації
+        session.pop('reg_username', None)
+        session.pop('reg_email', None)
 
         flash('Реєстрація успішна. Увійдіть до акаунту.')
         return redirect(url_for('login'))
 
-    return render_template('register.html')
-
-
-@app.route('/delete/<filename>', methods=['POST'])
-@login_required
-def delete_video(filename):
-    video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    try:
-        if os.path.exists(video_path):
-            os.remove(video_path)
-            flash('Відео успішно видалено', 'success')
-        else:
-            flash('Файл не знайдено', 'error')
-    except Exception as e:
-        flash(f'Помилка при видаленні: {str(e)}', 'error')
-    return redirect(url_for('profile'))  # або 'main', залежно куди треба повернути
+    return render_template('register.html',
+                           username=session.pop('reg_username', ''),
+                           email=session.pop('reg_email', ''))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -181,19 +210,20 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        session['email'] = email  # Зберігаємо email на випадок помилки
 
         user = User.query.filter_by(email=email).first()
 
         if not user or not user.check_password(password):
+            session['login_email'] = email  # Зберігаємо тимчасово
             flash('Невірний email або пароль.')
             return redirect(url_for('login'))
 
         login_user(user)
-        session.pop('email', None)  # Очищаємо email після успішного входу
+        session.pop('login_email', None)  # Очищаємо після входу
         return redirect(url_for('profile'))
 
-    return render_template('login.html')
+    return render_template('login.html',
+                           email=session.pop('login_email', ''))
 
 
 @app.route('/logout')
@@ -202,6 +232,12 @@ def logout():
     logout_user()
     flash('Ви вийшли з акаунта.', 'success')
     return redirect(url_for('login'))
+
+
+@app.route('/videohostplus')
+def videohostplus():
+    return render_template('videohostplus.html')
+
 
 
 if __name__ == '__main__':

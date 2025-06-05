@@ -1,27 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="header-profile">
-    <h1>Профіль користувача</h1>
-</div>
+<div id="content-wrapper">
 
-<section class="profile-container">
-    <!-- Інформація про користувача -->
+  <div class="header-profile">
+      <h1>Профіль користувача</h1>
+      <a href="" class="upload-button url_for">Edit</a>
+  </div>
+
+  <section class="profile-container">
     <div class="profile-header">
-            <div class="avatar-container">
-        <!-- Аватарка користувача -->
-        <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="Avatar" class="profile-avatar">
-
-        <!-- Форма для завантаження аватарки -->
-        <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
-            <!-- Мітка для кнопки вибору файлу, яка виглядає як кнопка зміни аватара -->
-            <label for="avatar-input" class="avatar-upload-label" title="Змінити аватар"></label>
-            <!-- Приховане поле для завантаження файлу -->
-            <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="this.form.submit()">
-        </form>
-    </div>
-
-
+        <div class="avatar-container">
+            <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="Avatar" class="profile-avatar">
+            <form action="{{ url_for('upload_avatar') }}" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+                <label for="avatar-input" class="avatar-upload-label" title="Змінити аватар"></label>
+                <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="this.form.submit()">
+            </form>
+        </div>
         <div class="profile-info">
             <h2>{{ user.username }}</h2>
             <div class="user-info">
@@ -31,31 +26,76 @@
     </div>
 </section>
 
-<!-- Список відео -->
 <section class="videos-profile-container">
     <div class="videos-header">
         <h3>Мої відео</h3>
-        <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" class="upload-button-form">
-            <label for="video-upload" class="upload-button">➕ Завантажити відео</label>
-            <input type="file" name="video" id="video-upload" accept="video/mp4,video/webm" required onchange="this.form.submit()">
-        </form>
+        <label for="video-upload" class="upload-button" onclick="openModal()">➕ Завантажити відео</label>
     </div>
-    <div class="videos-grid">
+</section>
+
+</div>
+
+<!-- Модальне вікно -->
+<div id="uploadModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Завантажити відео</h2>
+    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+        <div class="file-input-wrapper">
+            <input type="file" name="video" id="video" accept="video/*" required>
+            <span id="file-name"">Файл не вибрано</span>
+            <label for="video" class="file-label">➕ Додати відео</label>
+        </div>
+
+        <label for="title">Назва відео:</label>
+        <input type="text" id="title" name="title" placeholder="Введіть назву для відео" required>
+
+        <label for="description">Опис:</label>
+        <textarea id="description" name="description" rows="4" placeholder="Введіть опис до відео..." required></textarea>
+
+        <button type="submit">Завантажити</button>
+    </form>
+  </div>
+</div>
+
+<div class="videos-grid">
         {% for video in videos %}
         <div class="video-card">
             <video width="100%" height="200" controls>
-                <source src="{{ url_for('static', filename='uploads/' ~ video) }}" type="video/mp4">
+                <source src="{{ url_for('static', filename='uploads/' + video.filename) }}" type="video/mp4">
                 Ваш браузер не підтримує відео.
             </video>
             <div class="video-info">
-                <h4>{{ video }}</h4>
-                <form action="{{ url_for('delete_video', filename=video) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити це відео?');">
-                    <button type="submit" class="delete-button">🗑️ Видалити</button>
-                </form>
+                <h4>{{ video.title }}</h4>
+                <p>{{ video.description }}</p>
+                <form action="{{ url_for('delete_video', video_id=video.id) }}" method="POST" onsubmit="return confirm('Ви впевнені, що хочете видалити це відео?');">
+              <div class="button-container">
+                <button class="delete-button">Видалити</button>
+              </div>
+              </form>
             </div>
         </div>
         {% endfor %}
-    </div> 
-</section>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('uploadModal').style.display = 'flex';
+  }
+  function closeModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+  }
+
+  const fileInput = document.getElementById('video');
+    const fileName = document.getElementById('file-name');
+
+    fileInput.addEventListener('change', function () {
+      if (this.files.length > 0) {
+        fileName.textContent = this.files[0].name;
+      } else {
+        fileName.textContent = "Файл не вибрано";
+      }
+    });
+</script>
 
 {% endblock %}

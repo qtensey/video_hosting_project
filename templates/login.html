@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>logining form</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-loging.css') }}">
+    <title>Вхід</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-login.css') }}">
 </head>
-
-
 <body>
+
+    <!-- Контейнер для particles.js -->
+    <div id="particles-js"></div>
+
+    <!-- Основна форма -->
     <div class="auth-container">
+        <!-- <a href="{{ url_for('main') }}" class="home-link">Home</a> -->
         <h2>Вхід</h2>
+
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="flash-message">
@@ -23,7 +27,7 @@
 
         <form method="POST" class="auth-form">
             <label>Email:</label>
-            <input type="email" name="email" value="{{ session.pop('email', '') }}" required>
+            <input type="email" name="email" value="{{ email }}" required>
 
             <label>Пароль:</label>
             <input type="password" name="password" required>
@@ -34,7 +38,10 @@
         <div class="register-link">
             <p>Ще не зареєстровані? <a href="{{ url_for('register') }}">Зареєструватися</a></p>
         </div>
-
     </div>
+
+    <!-- Підключення скриптів -->
+    <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
 </body>
 </html>

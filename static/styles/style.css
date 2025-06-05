@@ -1,32 +1,32 @@
-html {
-  font-size: 16px; /* базовий розмір шрифта для 1rem = 16px */
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+html, body {
+  overflow: hidden; /* Вимикаємо зовнішню прокрутку */
   background-color: #121212;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  background-attachment: fixed; /* Фон фіксований */
+  background-size: cover; /* За потреби */
+  font-family: Arial, sans-serif;
+  color: #fff;
 }
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 10px;
   background-color: #1f1f1f;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  margin: 5px;
+  padding: 10px 20px;
+  height: 35px;
+  margin-left: 5px;
+  margin-bottom: 5px;
 }
 
-.header-left {
+.header-profile {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  border-radius: 10px;
+  padding: 10px;
+  height: 35px;
 }
 
 .logo {
@@ -35,17 +35,12 @@ header {
   color: #9359b8;
 }
 
-.menu-icon, .profile-icon {
+.menu-icon, .profile-icon, .url_for {
   font-size: 16px;
   cursor: pointer;
   color: white;
   text-decoration: none;
   padding-right: 20px;
-}
-
-.url_for {
-  text-decoration: none;
-  color: white;
 }
 
 .search-bar input {
@@ -59,18 +54,21 @@ header {
 
 .main-layout {
   display: flex;
-  flex: 1;
-  overflow: hidden;
 }
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 200px;
   background-color: #1a1a1a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   padding: 16px;
   height: calc(100vh - 60px);
   overflow-y: auto;
   border-radius: 10px;
-  margin: 0px 5px;
+  margin-left: 5px;
+  margin-top: 5px;
 }
 
 .sidebar nav ul {
@@ -91,71 +89,76 @@ header {
   color: white;
 }
 
+.sidebar nav ul li a.url_for {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: white;
+}
+
 .content {
   flex: 1;
-  padding: 32px;
-  overflow-y: auto;
+  padding-top: 5px;
+  padding-left: 15px;
 }
 
 .videos-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 стовпці в одному рядку */
-  gap: 1.5rem; /* відстань між елементами (24px) */
-  width: 100%;
-  box-sizing: border-box; /* щоб padding не впливав на ширину */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
 .video-card {
   background-color: #1e1e1e;
-  width: 100%; /* відео займає всю ширину в межах своїх стовпців */
-  border-radius: 8px;
+  width: 100%;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s;
-  padding: 0px;
-  margin: 0px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.video-card video,
-.video-card iframe {
+.video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+.video-card video, .video-card iframe, .thumbnail {
   display: block;
   width: 100%;
   height: auto;
   margin: 0;
-}
-
-
-.video-card:hover {
-  transform: scale(1.02);
-}
-
-@media (max-width: 1024px) {
-  .videos-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 стовпці на екранах середнього розміру */
-  }
-}
-
-@media (max-width: 768px) {
-  .videos-grid {
-    grid-template-columns: 1fr; /* 1 стовпець на мобільних екранах */
-  }
-}
-
-.thumbnail {
-  width: 100%;
-  height: 170px;
   background-color: #333;
 }
 
 .video-info {
+  display: flex;
+  flex-direction: column;
   padding: 16px;
+  text-align: left;
+}
+
+.video-info h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.video-info p {
+  font-size: 14px;
+  color: #bbb;
+  margin: 0;
 }
 
 .video-title {
   font-size: 16px;
   font-weight: bold;
   color: #fff;
-  margin: 0 0 8px 0;
+  margin-bottom: 8px;
 }
 
 .video-channel {
@@ -163,53 +166,96 @@ header {
   color: #aaaaaa;
 }
 
-
-/* Profile menu */
-
-
-.header-profile {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1f1f1f;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  padding-left: 20px;
-  height: 60px;
+@media (max-width: 1024px) {
+  .videos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.profile-container {
-  margin: 10px 0px;
-  background: #1f1f1f;
-  padding: 20px;
+@media (max-width: 768px) {
+  .videos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Profile */
+.profile-container, .videos-profile-container {
+  margin: 10px 0;
   padding-bottom: 5px;
   border-radius: 10px;
+  padding: 20px;
 }
 
 .profile-header {
   display: flex;
   align-items: center;
   gap: 30px;
-  background-color: #1e1e1e;
-  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
   margin-bottom: 30px;
   flex-wrap: wrap;
 }
 
 .profile-info h2 {
-  margin: 0px;
+  font-size: 1.8em;
+  margin: 0 0 10px;
+  color: #bb86fc;
+}
+
+.user-info p {
+  color: #ccc;
+  margin: 4px 0;
+}
+
+.avatar-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-upload-form {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: 2px solid #03dac6;
+}
+
+.avatar-upload-label:hover {
+  background-color: rgba(15, 164, 187, 0.229);
+}
+
+.avatar-upload-form input[type="file"] {
+  display: none;
 }
 
 .upload-button-form {
-    margin: 0;
-    display: flex;
-    align-items: center;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .upload-button {
-  background-color: #202020;
   color: #fff;
   padding: 10px 20px;
   border-radius: 6px;
@@ -225,12 +271,6 @@ header {
   display: none;
 }
 
-.videos-profile-container {
-  margin: 10px 0px;
-  padding-bottom: 5px;
-  border-radius: 10px;
-}
-
 .videos-header {
   display: flex;
   justify-content: space-between;
@@ -238,80 +278,263 @@ header {
   margin-bottom: 10px;
 }
 
-.delete-button {
-    background-color: #3b3a3c;
-    border: none;
-    padding: 6px 12px;
-    color: #000;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 5px;
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* вирівнює все вміст вправо */
+  margin-top: 10px;
 }
+
+.delete-button {
+  background-color: #3b3a3c;
+  border: none;
+  padding: 6px 12px;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 
 .delete-button:hover {
-    background-color: #686868;
+  background-color: #686868;
 }
 
-.video-info {
-  display: flex;
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
   justify-content: center;
   align-items: center;
 }
 
-/* Profile avatar */
-
-.avatar-container {
-    position: relative; /* Контейнер для аватарки з позиціонуванням */
-    width: 100px; /* Визначаємо чіткий розмір контейнера */
-    height: 100px; /* Визначаємо чіткий розмір контейнера */
-    flex-shrink: 0; /* Забезпечуємо, щоб контейнер не зменшувався */
+.modal-content {
+  background: #1e1e1e;
+  color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 450px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.profile-avatar {
-    width: 100%; /* Зображення заповнює весь контейнер */
-    height: 100%; /* Зображення заповнює весь контейнер */
-    border-radius: 50%; /* Округляємо аватар */
-    object-fit: cover; /* Відповідає за заповнення зображення контейнера */
-     /* Бордер для аватарки */
-    display: block;
+.close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  color: #bbb;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.avatar-upload-form {
-    position: absolute; /* Позиціонуємо форму абсолютно відносно контейнера */
-    bottom: 0; /* Закріплюємо форму внизу */
-    right: 0; /* Закріплюємо форму праворуч */
-    width: 100px; /* Ширина кнопки */
-    height: 100px; /* Висота кнопки */
+.close:hover {
+  color: #fff;
 }
 
-.avatar-upload-label {
-    display: flex; /* Використовуємо flexbox для центрування вмісту */
-    align-items: center; /* Вертикальне вирівнювання */
-    justify-content: center; /* Горизонтальне вирівнювання */
-    width: 100%; /* Забезпечуємо, щоб кнопка займала всю ширину */
-    height: 100%; /* Забезпечуємо, щоб кнопка займала всю висоту */
-    border-radius: 50%; /* Кругла кнопка */
-    cursor: pointer; /* Курсор як рука при наведенні */
-    transition: background-color 0.3s; /* Ефект переходу при наведенні */
-    border: 2px solid #03dac6;
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.avatar-upload-label:hover {
-    background-color: rgba(15, 164, 187, 0.229); /* Зміна фону при наведенні */
+.upload-form label {
+  font-weight: 500;
 }
 
-.avatar-upload-form input[type="file"] {
-    display: none; /* Приховуємо стандартне поле вибору файлів */
+.upload-form input, .upload-form textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #2c2c2c;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.profile-info h2 {
-    font-size: 1.8em;
-    margin: 0 0 10px;
-    color: #bb86fc;
+.upload-form textarea {
+  height: 100px;
+  resize: none;
 }
 
-.user-info p {
-    color: #ccc;
-    margin: 4px 0;
+.upload-form input:focus,
+.upload-form textarea:focus {
+  border-color: #ab5bca78;
+  outline: none;
+}
+
+.upload-form button {
+  padding: 10px;
+  background-color: #7b5cb3;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.upload-form button:hover {
+  opacity: 0.85;
+}
+
+.file-input-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-input-wrapper input[type="file"] {
+  display: none;
+}
+
+.file-label {
+  background: #333;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+.file-label:hover {
+  opacity: 0.85;
+}
+
+#file-name {
+  color: #bbb;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ==== Subscribe ==== */
+
+.subscription-container {
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  
+  overflow: hidden;       /* Забороняємо внутрішню прокрутку */
+  text-align: center;
+}
+
+.subscription-content {
+  overflow-y: auto;
+  max-height: 100%;
+  padding-right: 10px; /* Щоб не було обрізання контенту при прокрутці */
+}
+
+.subscription-title {
+  font-size: 32px;
+  color: #bb86fc;
+  margin-bottom: 10px;
+}
+
+.subscription-description {
+  font-size: 18px;
+  color: #ccc;
+  margin-bottom: 30px;
+}
+
+.subscription-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.plan-card {
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.plan-card h2 {
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.plan-card p {
+  font-size: 20px;
+  color: #03dac6;
+}
+
+.plan-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+  color: #bbb;
+  text-align: left;
+}
+
+.subscribe-button {
+  background-color: #7b5cb3;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.3s;
+}
+
+.subscribe-button:hover {
+  opacity: 0.85;
+}
+
+/* ==== Subscriptions ==== */
+
+.subscriptions-page {
+  padding-left: 20px;
+}
+
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 24px;
+  justify-items: center;
+  margin-top: 20px;
+}
+
+.subscription-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.subscription-profile img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease;
+}
+
+.subscription-profile img:hover {
+  transform: scale(1.05);
+}
+
+.subscription-profile p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ccc;
 }

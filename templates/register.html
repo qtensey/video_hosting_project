@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>registration form</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-loging.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style-login.css') }}">
 </head>
 
 <body>
+
+    <div id="particles-js"></div>
+
     <div class="auth-container">
+        <!-- <a href="{{ url_for('main') }}" class="home-link">Home</a> -->
         <h2>Реєстрація</h2>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -22,10 +26,10 @@
         
         <form method="POST" class="auth-form">
             <label>Ім’я користувача:</label>
-            <input type="text" name="username" value="{{ session.pop('username', '') }}" required>
+            <input type="text" name="username" value="{{ username }}" required>
 
             <label>Email:</label>
-            <input type="email" name="email" value="{{ session.pop('email', '') }}" required>
+            <input type="email" name="email" value="{{ email }}" required>
 
             <label>Пароль:</label>
             <input type="password" name="password" required>
@@ -41,5 +45,8 @@
         </div>
 
     </div>
+
+    <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
 </body>
 </html>
